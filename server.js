@@ -1,46 +1,63 @@
 const request = require('request')
-const json = require('json-promise');
+//const json = require('json-promise');
+const Promise = require('bluebird');
 
-var username = '';
-var password = '';
+var username = 'BitTigerDashBoardAgent';
+var password = 'bittiger2016';
 
-var members_list=[]
+var members_list = []
 
-var options = {
-    url: 'https://api.github.com/orgs/bittigerInst/members', // URL to hit
-    qs: { //Query string data
-        page:2
-    },
-    method: 'GET', //Specify the method
-    headers: { //Define headers
-        'User-Agent': 'request'
-    },
-    auth: { //HTTP Authentication
-        user: username,
-        pass: password
-    }
+function make_option(page_number) {
+	return {
+		url: 'https://api.github.com/orgs/bittigerInst/members', // URL to hit
+		qs: { //Query string data
+			page: page_number
+		}
+		, method: 'GET', //Specify the method
+		headers: { //Define headers
+			'User-Agent': 'request'
+		}
+		, auth: { //HTTP Authentication
+			user: username
+			, pass: password
+		}
+		, json: true
+	};
 }
 
-function callback(error, response, body) {
+var funcs = Promise.resolve([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => makeRequest(n)));
 
-    json.parse(body)
-        .then(function onParse(objs) {
-            // do something with the data object
+funcs
+	.mapSeries(iterator)
+	.catch(function (err) {
+		console.log(err);
+	})
+	.finally(function () {
+		//console.log(members_list);
 
-            console.log(objs);
+		for (var i = 0; i < members_list.length; i++) {
+			console.log(members_list[i].login);
+		}
 
+		console.log('Done!');
+	})
 
-            // console.log("The number of events is " + events.length);
-            // for (i = 0; i < events.length; i++) {
-            //     var event = events[i];
-            //     //console.log(event.id);
-            //     console.log(event.created_at);
-            // }
-
-        })
-        .catch(function onParseError(e) {
-            // the data is corrupted!
-        });
+function iterator(f) {
+	return f()
 }
 
-request(options, callback);
+function makeRequest(page_num) {
+	return function () {
+		return new Promise(function (fulfill, reject) {
+			request(make_option(page_num), function (error, response, body) {
+				if (error || body.length == 0) {
+					reject('Rejected by Cosmo.' + page_num);
+				} else {
+					console.log(body.length);
+					members_list = members_list.concat(body);
+					fulfill(body);
+				}
+			})
+		})
+	};
+}
