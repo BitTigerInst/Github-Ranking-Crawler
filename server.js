@@ -1,11 +1,18 @@
-const request = require('request')
-//const json = require('json-promise');
+const Account = require('./configs/account');
+const User = require('./crawl_user');
+const Request = require('request');
 const Promise = require('bluebird');
+const Fs = require('fs');
 
-var username = 'BitTigerDashBoardAgent';
-var password = 'bittiger2016';
+var username = Account.username;
+var password = Account.password;
 
-var members_list = []
+
+var github_info = {
+    'members_list' : [],
+    'repository_list': []
+}
+
 
 function make_option(page_number) {
 	return {
@@ -25,7 +32,15 @@ function make_option(page_number) {
 	};
 }
 
-var funcs = Promise.resolve([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => makeRequest(n)));
+function make_range(max_number) {
+    var result = [];
+    for(var i=1 ; i<=max_number; i++) {
+        result.push(i);
+    }
+    return result;
+}
+
+var funcs = Promise.resolve(make_range(10).map((n) => makeRequest(make_option(n), 'members_list')));
 
 funcs
 	.mapSeries(iterator)
@@ -33,28 +48,36 @@ funcs
 		console.log(err);
 	})
 	.finally(function () {
-		//console.log(members_list);
+    
+        var members_list = github_info['members_list'];
+		console.log(members_list.length);
 
-		for (var i = 0; i < members_list.length; i++) {
-			console.log(members_list[i].login);
-		}
-
-		console.log('Done!');
+        var user_events = [];
+        for (var i = 0; i < members_list.length; ++i) {
+            user_events.push(User.crawl_user(members_list[i].login)());
+        }
+    
+        Promise.all(user_events).then(function(member_events) {
+            member_events.sort(function(a, b) {return b['Total'] - a['Total']})
+            console.log(member_events);
+        });
 	})
 
 function iterator(f) {
 	return f()
 }
 
-function makeRequest(page_num) {
+function makeRequest(option, key) {
 	return function () {
 		return new Promise(function (fulfill, reject) {
-			request(make_option(page_num), function (error, response, body) {
-				if (error || body.length == 0) {
-					reject('Rejected by Cosmo.' + page_num);
+			Request(option, function (error, response, body) {
+				if (error) {
+                    reject(error);
+                } else if (body.length == 0) {
+					reject('page empty');
 				} else {
 					console.log(body.length);
-					members_list = members_list.concat(body);
+					github_info[key] = github_info[key].concat(body);
 					fulfill(body);
 				}
 			})
