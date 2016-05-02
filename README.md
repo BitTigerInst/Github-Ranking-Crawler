@@ -17,6 +17,7 @@
 
 
 ## Resource
+- [angular-chart](http://jtblin.github.io/angular-chart.js/)
 - [Dashboard with Chart.js](http://webdesign.tutsplus.com/tutorials/build-a-dynamic-dashboard-with-chartjs--webdesign-14363)
 - [BitTiger Crawler](https://github.com/BitTigerInst/Crawler-bitTiger)
 	- [pull request: add fetch github activity fecher](https://github.com/BitTigerInst/Crawler-bitTiger/pull/1/commits)

@@ -1,0 +1,17 @@
+{
+  "name": "project-dashboard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cosmo",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.3.5",
+    "json-promise": "^1.1.8",
+    "request": "^2.72.0",
+    "request-promise": "^3.0.0"
+  }
+}
