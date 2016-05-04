@@ -17,6 +17,7 @@ function crawl_user(user) {
             'login': user.login,
             'avatar_url': user.avatar_url,
             'html_url': user.html_url,
+            'organization': user.organization,
             'Total': 0,
             'PushEvent': 0,
             'PullRequestEvent': 0,

@@ -2,7 +2,7 @@
   "name": "project-dashboard",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "launcher.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +10,14 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.3.5",
+    "common": "^0.2.5",
+    "cron": "^1.1.0",
+    "express": "^4.13.4",
     "firebase": "^2.4.2",
     "json-promise": "^1.1.8",
     "moment": "^2.13.0",
     "request": "^2.72.0",
-    "request-promise": "^3.0.0"
+    "request-promise": "^3.0.0",
+    "time": "^0.11.4"
   }
 }
