@@ -6,78 +6,82 @@ const Time = require('./time');
 var username = Account.username;
 var password = Account.password;
 
-function crawl_user(user_id) {
+function crawl_user(user) {
 
-    return function () {
+    return new Promise(function (fulfill, reject) {
+        console.log('user_id is ' + user.login);
 
-        return new Promise(function (fulfill, reject) {
-            console.log('user_id is ' + user_id);
+        var current_date = Time.get_current_date();
+        var last_week_date = Time.get_last_week_date();
+        console.log('**** The current date on server is ' + current_date);
+        console.log('**** The last week date on server is ' + last_week_date);
 
-            var current_date = Time.get_current_date();
-            var last_week_date = Time.get_last_week_date();
-            var user_info = {
-                'User' : user_id,
-                'Total': 0,
-                'PushEvent': 0,
-                'PullRequestEvent': 0,
-                'CreateEvent': 0,
-                'ForkEvent': 0
-            }
 
-            var funcs = Promise.resolve(make_range(10).map((n) => makeRequest(make_option(n, user_id))));
-            funcs
-                .mapSeries(iterator)
-                .catch(function (err) {
-                    console.log(err);
-                })
-                .finally(function () {
-                    user_info['Total'] = user_info['PushEvent'] +
-                        user_info['PullRequestEvent'] +
-                        user_info['CreateEvent'] +
-                        user_info['ForkEvent'];
+        var user_info = {
+            'login': user.login,
+            'avatar_url': user.avatar_url,
+            'html_url': user.html_url,
+            'organization': user.organization,
+            'Total': 0,
+            'PushEvent': 0,
+            'PullRequestEvent': 0,
+            'CreateEvent': 0,
+            'ForkEvent': 0
+        }
 
-                    //console.log(user_info);
-                    console.log('Finished crawling: ' + user_id);
+        var funcs = Promise.resolve(make_range(10).map((n) => makeRequest(make_option(n, user.login))));
+        funcs
+            .mapSeries(iterator)
+            .catch(function (err) {
+                console.log(err);
+            })
+            .finally(function () {
+                user_info['Total'] = user_info['PushEvent'] +
+                    user_info['PullRequestEvent'] +
+                    user_info['CreateEvent'] +
+                    user_info['ForkEvent'];
 
-                    fulfill(user_info);
-                })
+                //console.log(user_info);
+                console.log('Finished crawling: ' + user.login);
 
-            function makeRequest(option) {
-                return function () {
-                    return new Promise(function (fulfill, reject) {
-                        Request(option, function (error, response, body) {
-                            if (error) {
-                                reject(error);
-                            } else if (body.length == 0) {
-                                reject('page empty');
-                            } else {
-                                console.log(body.length);
-                                parseBody(body);
-                                fulfill(body);
-                            }
-                        })
+                fulfill(user_info);
+            })
+
+        function makeRequest(option) {
+            return function () {
+                return new Promise(function (fulfill, reject) {
+                    Request(option, function (error, response, body) {
+                        if (error) {
+                            reject(error);
+                        } else if (body.length == 0) {
+                            reject('page empty');
+                        } else {
+                            //console.log(body.length);
+                            parseBody(body);
+                            fulfill(body);
+                        }
                     })
-                };
-            }
+                })
+            };
+        }
 
-            function parseBody(body) {
+        function parseBody(body) {
 
-                for (var i = 0; i < body.length; i++) {
-                    event_type = body[i].type;
-                    event_date = body[i].created_at;
-                    
-                    if (event_date > last_week_date && (
+            for (var i = 0; i < body.length; i++) {
+                event_type = body[i].type;
+                event_date = body[i].created_at;
+
+                if (event_date > last_week_date && (
                         event_type == 'PushEvent' ||
                         event_type == 'PullRequestEvent' ||
                         event_type == 'CreateEvent' ||
                         event_type == 'ForkEvent')) {
-                        
-                        user_info[event_type]++;
-                    }
+
+                    user_info[event_type]++;
                 }
             }
-        });
-    };
+        }
+    });
 }
 
 function iterator(f) {
@@ -86,7 +90,7 @@ function iterator(f) {
 
 function make_range(max_number) {
     var result = [];
-    for (var i = 0; i < max_number; i++) {
+    for (var i = 1; i < max_number; i++) {
         result.push(i);
     }
     return result;
