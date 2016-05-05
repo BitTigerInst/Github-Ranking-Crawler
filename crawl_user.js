@@ -13,6 +13,10 @@ function crawl_user(user) {
 
         var current_date = Time.get_current_date();
         var last_week_date = Time.get_last_week_date();
+        console.log('**** The current date on server is ' + current_date);
+        console.log('**** The last week date on server is ' + last_week_date);
+
+
         var user_info = {
             'login': user.login,
             'avatar_url': user.avatar_url,
@@ -52,7 +56,7 @@ function crawl_user(user) {
                         } else if (body.length == 0) {
                             reject('page empty');
                         } else {
-                            console.log(body.length);
+                            //console.log(body.length);
                             parseBody(body);
                             fulfill(body);
                         }

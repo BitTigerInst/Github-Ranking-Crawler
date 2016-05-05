@@ -79,7 +79,7 @@ var crawl_github = function () {
                     } else if (body.length == 0) {
                         reject('page empty');
                     } else {
-                        console.log(body.length);
+                        //console.log(body.length);
                         github_info[key] = github_info[key].concat(body);
                         fulfill(body);
                     }
