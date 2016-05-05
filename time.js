@@ -9,7 +9,7 @@ function get_current_date() {
 
     var now = new Date();
     // The Heroku server is running in UTC+0. We adjust  the time zone to UTC-7.
-    new.setDate(new.getHours() - 7);
+    now.setDate(now.getHours() - 7);
 
     return now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + ("0" + now.getDate()).slice(-2);
 }
