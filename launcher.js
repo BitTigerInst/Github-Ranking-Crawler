@@ -12,6 +12,6 @@ app.get('/', function (req, res) {
     res.send('Welcome to the BitTiger Github crawler!!');
 });
 
-app.listen(4000, function () {
+app.listen(process.env.PORT || 5000, function () {
     console.log('App listening on port 4000!');
 });
