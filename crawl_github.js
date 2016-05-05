@@ -53,6 +53,7 @@ var crawl_github = function () {
                     });
 
                     top25_members = member_events.slice(0, 25);
+                    console.log('Updating the database...');
                     promise_events_update = user_events_ref.child('events').set(top25_members);
                     promise_time_udpate =
                         user_events_ref.child('created_time').set(Time.get_current_timestamp());
