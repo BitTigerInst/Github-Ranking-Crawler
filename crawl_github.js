@@ -91,7 +91,7 @@ var crawl_github = function () {
                                 var current_ranking = i + 1;
                                 if (previous_rankings[user]) {
                                     var ranking_records = previous_rankings[user];
-                                    member_events[i].ranking_change = ranking_records[ranking_records.length - 1].ranking - current_ranking;
+                                    member_events[i].ranking_change = current_ranking - ranking_records[ranking_records.length - 1];
                                     previous_rankings[user].push({
                                         'timestamp': current_time,
                                         'ranking': current_ranking
