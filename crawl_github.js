@@ -1,14 +1,11 @@
 const Account = require('./configs/account');
-const HolyShit = require('./top_coders');
-const Time = require('./time');
+const HolyShit = require('./helpers/top_coders');
+const Utils = require('./helpers/my_utils');
 const User = require('./crawl_user');
 const Request = require('request');
 const Promise = require('bluebird');
 const Firebase = require('firebase');
-const Fs = require('fs');
 
-var username = Account.username;
-var password = Account.password;
 var ref = new Firebase("https://bittiger-ranking.firebaseio.com/");
 var user_events_ref = ref.child("user_events");
 var user_ranking_info_ref = ref.child("user_ranking_info");
@@ -33,9 +30,9 @@ var crawl_github = function (production) {
         'repository_list': []
     }
 
-    var current_time = Time.get_current_date();
+    var current_time = Utils.get_current_date();
 
-    var funcs = Promise.resolve(make_range(10).map((n) => makeRequest(make_option(n), 'members_list')));
+    var funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n), 'members_list')));
 
     funcs
         .mapSeries(iterator)
@@ -179,20 +176,12 @@ var crawl_github = function (production) {
                 'User-Agent': 'request'
             },
             auth: { //HTTP Authentication
-                user: username,
-                pass: password
+                user: Account.username,
+                pass: Account.password
             },
             json: true
         };
     }
-}
-
-function make_range(max_number) {
-    var result = [];
-    for (var i = 1; i <= max_number; i++) {
-        result.push(i);
-    }
-    return result;
 }
 
 function terminate_app() {
@@ -217,7 +206,6 @@ function retrieve_previous_user_ranking() {
 }
 
 function update_previous_user_ranking(new_records) {
-
     user_ranking_info_ref.set(new_records);
 }
 
