@@ -13,28 +13,20 @@ var ref = new Firebase("https://bittiger-ranking.firebaseio.com/");
 var user_events_ref = ref.child("user_events");
 var user_ranking_info_ref = ref.child("user_ranking_info");
 
-function retrieve_previous_user_ranking() {
-    return new Promise(function (fulfill, reject) {
-        user_ranking_info_ref.once("value", function (user_ranking_info) {
-            var result;
-            if (user_ranking_info.val() == null) {
-                // Initialize the data
-                console.log("user_ranking_info == null");
-                result = {};
-            } else {
-                result = user_ranking_info.val();
-            }
-            fulfill(result);
-        });
+var crawl_github_auth = function (production) {
+
+    ref.authWithCustomToken(Account.firebase_secrets, function (error, authData) {
+        if (error) {
+            console.log("Login Failed!", error);
+            terminate_app();
+        } else {
+            console.log("Login Succeeded!", authData);
+            crawl_github(production);
+        }
     });
 }
 
-function update_previous_user_ranking(new_records) {
-
-    user_ranking_info_ref.set(new_records);
-}
-
-var crawl_github = function () {
+var crawl_github = function (production) {
 
     var github_info = {
         'members_list': [],
@@ -91,7 +83,12 @@ var crawl_github = function () {
                                 var current_ranking = i + 1;
                                 if (previous_rankings[user]) {
                                     var ranking_records = previous_rankings[user];
-                                    member_events[i].ranking_change = ranking_records[ranking_records.length - 1].ranking - current_ranking;
+                                    var last_ranking = ranking_records[ranking_records.length - 1].ranking;
+                                    //                                    console.log("")
+                                    //                                    console.log(user + " current_ranking:" + current_ranking);
+                                    //                                    console.log(user + " last_ranking:" + last_ranking);
+
+                                    member_events[i].ranking_change = current_ranking - last_ranking;
                                     previous_rankings[user].push({
                                         'timestamp': current_time,
                                         'ranking': current_ranking
@@ -125,11 +122,13 @@ var crawl_github = function () {
                                     member_events[i].ranking_history = last_few_records;
                                 }
 
-                                console.log(user + " " + member_events[i].ranking_history);
+                                //console.log(user + " " + member_events[i].ranking_history);
                             }
 
                             /* update members' ranking records to Firebase */
-                            update_previous_user_ranking(previous_rankings);
+                            if (production) {
+                                update_previous_user_ranking(previous_rankings);
+                            }
 
                             /* retrieve the top 25 users' information */
                             top25_members = member_events.slice(0, 25);
@@ -186,19 +185,40 @@ var crawl_github = function () {
             json: true
         };
     }
-
-    function make_range(max_number) {
-        var result = [];
-        for (var i = 1; i <= max_number; i++) {
-            result.push(i);
-        }
-        return result;
-    }
-
-    function terminate_app() {
-        console.log("Done!!");
-        //process.exit();
-    }
 }
 
-exports.crawl_github = crawl_github;
+function make_range(max_number) {
+    var result = [];
+    for (var i = 1; i <= max_number; i++) {
+        result.push(i);
+    }
+    return result;
+}
+
+function terminate_app() {
+    console.log("Finished!");
+    //process.exit();
+}
+
+function retrieve_previous_user_ranking() {
+    return new Promise(function (fulfill, reject) {
+        user_ranking_info_ref.once("value", function (user_ranking_info) {
+            var result;
+            if (user_ranking_info.val() == null) {
+                // Initialize the data
+                console.log("user_ranking_info == null");
+                result = {};
+            } else {
+                result = user_ranking_info.val();
+            }
+            fulfill(result);
+        });
+    });
+}
+
+function update_previous_user_ranking(new_records) {
+
+    user_ranking_info_ref.set(new_records);
+}
+
+exports.crawl_github = crawl_github_auth;

@@ -7,7 +7,14 @@ var port = process.env.PORT || 5000;
 app.get('/crawl', function (req, res) {
     console.log('Received request:');
     //console.log(req.headers);
-    GithubCrawler.crawl_github();
+    GithubCrawler.crawl_github(true);
+    res.send('Busy crawling our github...');
+});
+
+app.get('/test', function (req, res) {
+    console.log('Received request:');
+    //console.log(req.headers);
+    GithubCrawler.crawl_github(false);
     res.send('Busy crawling our github...');
 });
 
