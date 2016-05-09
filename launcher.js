@@ -14,8 +14,8 @@ app.get('/crawl', function (req, res) {
     // so we won't accept any request outside 6~7 am.
     if (current_timestamp_h == '6') {
         GithubCrawler.crawl_github(true);
-    } else {
         res.send('Busy crawling our github...');
+    } else {
         console.log('Warning!! A mystery request is captured...');
         console.log(req.headers);
         res.send('迷の请求……');
