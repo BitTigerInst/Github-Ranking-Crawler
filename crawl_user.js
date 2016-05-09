@@ -11,8 +11,8 @@ function crawl_user(user) {
     return new Promise(function (fulfill, reject) {
         console.log('user_id is ' + user.login);
 
-        var current_date = Utils.get_current_date();
-        var last_week_date = Utils.get_last_week_date();
+        var current_date = Utils.get_current_timestamp();
+        var last_week_date = Utils.get_last_week_timestamp();
         console.log('**** The current date on server is ' + current_date);
         console.log('**** The last week date on server is ' + last_week_date);
 

@@ -30,7 +30,7 @@ var crawl_github = function (production) {
         'repository_list': []
     }
 
-    var current_time = Utils.get_current_date();
+    var current_time = Utils.get_current_timestamp();
 
     var funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n), 'members_list')));
 
