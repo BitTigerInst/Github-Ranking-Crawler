@@ -57,8 +57,12 @@ function crawl_user(user) {
                             reject('page empty');
                         } else {
                             //console.log(body.length);
-                            parseBody(body);
-                            fulfill(body);
+                            var should_continue = parseBody(body);
+                            if (should_continue) {
+                                fulfill(body);
+                            } else {
+                                reject('outdated events');
+                            }
                         }
                     })
                 })
@@ -67,19 +71,26 @@ function crawl_user(user) {
 
         function parseBody(body) {
 
-            for (var i = 0; i < body.length; i++) {
-                event_type = body[i].type;
-                event_date = body[i].created_at;
+            var should_continue = true;
+            if (body[0].created_at < last_week_date) {
+                should_continue = false;
+            } else {
 
-                if (event_date > last_week_date && (
-                        event_type == 'PushEvent' ||
-                        event_type == 'PullRequestEvent' ||
-                        event_type == 'CreateEvent' ||
-                        event_type == 'ForkEvent')) {
+                for (var i = 0; i < body.length; i++) {
+                    event_type = body[i].type;
+                    event_date = body[i].created_at;
 
-                    user_info[event_type]++;
+                    if (event_date >= last_week_date && (
+                            event_type == 'PushEvent' ||
+                            event_type == 'PullRequestEvent' ||
+                            event_type == 'CreateEvent' ||
+                            event_type == 'ForkEvent')) {
+
+                        user_info[event_type]++;
+                    }
                 }
             }
+            return should_continue;
         }
     });
 }
