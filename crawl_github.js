@@ -64,7 +64,18 @@ var crawl_github = function (production) {
 
                     /* sort the members based on events */
                     member_events.sort(function (a, b) {
-                        return b['Total'] - a['Total']
+
+                        if (b['Total'] != a['Total']) {
+                            return b['Total'] - a['Total'];
+                        } else if (b['PushEvent'] != a['PushEvent']) {
+                            return b['PushEvent'] - a['PushEvent'];
+                        } else if (b['PullRequestEvent'] != a['PullRequestEvent']) {
+                            return b['PullRequestEvent'] - a['PullRequestEvent'];
+                        } else if (b['CreateEvent'] != a['CreateEvent']) {
+                            return b['CreateEvent'] - a['CreateEvent'];
+                        } else {
+                            return b['ForkEvent'] - a['ForkEvent'];
+                        }
                     });
 
                     /* retrieve members' last ranking from Firebase */

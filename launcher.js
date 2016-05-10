@@ -25,7 +25,7 @@ app.get('/crawl', function (req, res) {
 app.get('/test', function (req, res) {
 
     console.log('Received test request.');
-    GithubCrawler.crawl_github(true);
+    GithubCrawler.crawl_github(false);
     res.send('Busy crawling our github...');
 });
 
