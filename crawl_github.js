@@ -6,7 +6,7 @@ const Request = require('request');
 const Promise = require('bluebird');
 const Firebase = require('firebase');
 
-var ref = new Firebase("https://bittiger-ranking.firebaseio.com/");
+var ref = new Firebase(Account.firebase_url);
 var user_events_ref = ref.child("user_events");
 var user_ranking_info_ref = ref.child("user_ranking_info");
 
@@ -62,7 +62,7 @@ var crawl_github = function (production) {
                 })
                 .then(function (member_events) {
 
-                    /* sort the members based on events */
+                    // sort the members based on events
                     member_events.sort(function (a, b) {
 
                         if (b['Total'] != a['Total']) {
@@ -78,7 +78,7 @@ var crawl_github = function (production) {
                         }
                     });
 
-                    /* retrieve members' last ranking from Firebase */
+                    // retrieve members' last ranking from Firebase
                     var previous_rankings_promise = retrieve_previous_user_ranking();
                     previous_rankings_promise
                         .catch(function (err) {
@@ -92,9 +92,6 @@ var crawl_github = function (production) {
                                 if (previous_rankings[user]) {
                                     var ranking_records = previous_rankings[user];
                                     var last_ranking = ranking_records[ranking_records.length - 1].ranking;
-                                    //                                    console.log("")
-                                    //                                    console.log(user + " current_ranking:" + current_ranking);
-                                    //                                    console.log(user + " last_ranking:" + last_ranking);
 
                                     member_events[i].ranking_change = current_ranking - last_ranking;
                                     previous_rankings[user].push({
@@ -102,10 +99,8 @@ var crawl_github = function (production) {
                                         'ranking': current_ranking
                                     });
 
-                                    /* 
-                                        Adjust the previous ranking range. If we have more than 100 records, we'll keep the latest
-                                        20 records.
-                                    */
+
+                                    // Adjust the previous ranking range. If we have more than 100 records, we'll keep the latest 20 records.
                                     if (previous_rankings[user].length > 100) {
                                         var pre_range = previous_rankings[user];
                                         var pre_range_len = pre_range.length;
@@ -129,16 +124,14 @@ var crawl_github = function (production) {
                                     var last_few_records = previous_rankings[user].slice(len - 1 - max_num, len - 1);
                                     member_events[i].ranking_history = last_few_records;
                                 }
-
-                                //console.log(user + " " + member_events[i].ranking_history);
                             }
 
-                            /* update members' ranking records to Firebase */
+                            // update members' ranking records to Firebase
                             if (production) {
                                 update_previous_user_ranking(previous_rankings);
                             }
 
-                            /* retrieve the top 25 users' information */
+                            // retrieve the top 25 users' information
                             top25_members = member_events.slice(0, 25);
                             console.log('Updating the database...');
                             promise_events_update = user_events_ref.child('events').set(top25_members);
@@ -167,7 +160,6 @@ var crawl_github = function (production) {
                     } else if (body.length == 0) {
                         reject('page empty');
                     } else {
-                        //console.log(body.length);                       
                         github_info[key] = github_info[key].concat(body);
                         fulfill(body);
                     }
@@ -179,14 +171,14 @@ var crawl_github = function (production) {
     function make_option(page_number) {
         return {
             url: 'https://api.github.com/orgs/bittigerInst/members', // URL to hit
-            qs: { //Query string data
+            qs: { // Query string data
                 page: page_number
             },
-            method: 'GET', //Specify the method
-            headers: { //Define headers
+            method: 'GET', // Specify the method
+            headers: { // Define headers
                 'User-Agent': 'request'
             },
-            auth: { //HTTP Authentication
+            auth: { // HTTP Authentication
                 user: Account.username,
                 pass: Account.password
             },
