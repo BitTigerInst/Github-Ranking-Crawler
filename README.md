@@ -21,7 +21,20 @@ This project consists of three components:
 > **This repository is for the crawler app.** Click [here](https://github.com/hackjustu/Github-Ranking-FrontEnd) to see the front-end app.
 
 ## Usage
-A static web sever should be enough to launch this web app. Please use `index.html` as the [webserver directory index page](https://en.wikipedia.org/wiki/Webserver_directory_index).
+To start the application:
+```
+npm install
+node launcher.js
+```
+To crawl the github data and update the ranking history(`user_ranking_info`) to database(Firebase):
+```
+localhost:port/crawl
+```
+To crawl the github data but **NOT** update the ranking history(`user_ranking_info`) to database(Firebase). We only update the ranking history in production scenario.
+```
+localhost:port/test
+```
+> **Note** You have to configure your own github account and firebase secret in ./configs/account.js 
 
 ## Firebase Date Structure
 **Firebase URL**: [https://bittiger-ranking.firebaseio.com](https://bittiger-ranking.firebaseio.com)
