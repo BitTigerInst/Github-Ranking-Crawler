@@ -1,21 +1,19 @@
 const Account = require('./configs/account');
 const Request = require('request');
 const Promise = require('bluebird');
-const Time = require('./time');
+const Utils = require('./helpers/my_utils');
 
 var username = Account.username;
 var password = Account.password;
+var current_date = Utils.get_current_timestamp();
+var last_week_date = Utils.get_last_week_timestamp();
+console.log('**** The current date on server is ' + current_date);
+console.log('**** The last week date on server is ' + last_week_date);
 
 function crawl_user(user) {
 
     return new Promise(function (fulfill, reject) {
         console.log('user_id is ' + user.login);
-
-        var current_date = Time.get_current_date();
-        var last_week_date = Time.get_last_week_date();
-        console.log('**** The current date on server is ' + current_date);
-        console.log('**** The last week date on server is ' + last_week_date);
-
 
         var user_info = {
             'login': user.login,
@@ -29,7 +27,7 @@ function crawl_user(user) {
             'ForkEvent': 0
         }
 
-        var funcs = Promise.resolve(make_range(10).map((n) => makeRequest(make_option(n, user.login))));
+        var funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n, user.login))));
         funcs
             .mapSeries(iterator)
             .catch(function (err) {
@@ -57,8 +55,12 @@ function crawl_user(user) {
                             reject('page empty');
                         } else {
                             //console.log(body.length);
-                            parseBody(body);
-                            fulfill(body);
+                            var should_continue = parseBody(body);
+                            if (should_continue) {
+                                fulfill(body);
+                            } else {
+                                reject('outdated events');
+                            }
                         }
                     })
                 })
@@ -67,33 +69,32 @@ function crawl_user(user) {
 
         function parseBody(body) {
 
-            for (var i = 0; i < body.length; i++) {
-                event_type = body[i].type;
-                event_date = body[i].created_at;
+            var should_continue = true;
+            if (body[0].created_at < last_week_date) {
+                should_continue = false;
+            } else {
 
-                if (event_date > last_week_date && (
-                        event_type == 'PushEvent' ||
-                        event_type == 'PullRequestEvent' ||
-                        event_type == 'CreateEvent' ||
-                        event_type == 'ForkEvent')) {
+                for (var i = 0; i < body.length; i++) {
+                    event_type = body[i].type;
+                    event_date = body[i].created_at;
 
-                    user_info[event_type]++;
+                    if (event_date >= last_week_date && (
+                            event_type == 'PushEvent' ||
+                            event_type == 'PullRequestEvent' ||
+                            event_type == 'CreateEvent' ||
+                            event_type == 'ForkEvent')) {
+
+                        user_info[event_type]++;
+                    }
                 }
             }
+            return should_continue;
         }
     });
 }
 
 function iterator(f) {
     return f()
-}
-
-function make_range(max_number) {
-    var result = [];
-    for (var i = 1; i < max_number; i++) {
-        result.push(i);
-    }
-    return result;
 }
 
 function make_option(page_number, user_id) {

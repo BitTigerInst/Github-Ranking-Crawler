@@ -1,5 +1,6 @@
 module.exports = {
-    username: 'BitTigerDashBoardAgent',
-    password: 'bittiger2016',
-    firebase_secrets: 'hh5zND83YPIn6rsPwMCq351WuBcx0vBweXdCZF6Y'
+    username: '<PUT_YOUR_GITHUB_ACCOUNT_HERE>',
+    password: '<PUT_YOUR_GITHUB_PASSWORD_HERE>',
+    firebase_secrets: '<PUT_YOUR_FIREBASE_SECRECT_HERE>',
+    firebase_url: '<PUT_YOUR_FIREBASE_URL_HERE>'
 }
