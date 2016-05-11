@@ -18,7 +18,7 @@ This project consists of three components:
 2.  A Firebase-powered persistence layer for the results from the crawler.
 3.  A front-end single-page app to show the members' rankings from the persistence layer.
 
-> **This repository is for the front-end app.** Click [here](https://github.com/hackjustu/Github-Project-Dashboard) to see the crawler app.
+> **This repository is for the crawler app.** Click [here](https://github.com/hackjustu/Github-Ranking-FrontEnd) to see the front-end app.
 
 ## Usage
 A static web sever should be enough to launch this web app. Please use `index.html` as the [webserver directory index page](https://en.wikipedia.org/wiki/Webserver_directory_index).
@@ -91,10 +91,10 @@ We adopt [**Clash of Clans**](supercell.com/en/games/clashofclans/)'s medal syst
 
 | Medal     | Icon |   Scores (Total) |
 | :--------:| :--: | :--------:| 
-| Champion  |<img src="./resource/champion.png" height="35px" align="center"> | > 100     |
-| Gold      |<img src="./resource/gold.png" height="35px" align="center"> | 50 - 100  |
-| Silver    |<img src="./resource/silver.png" height="35px" align="center"> | 20 - 50   |
-| Bronze    |<img src="./resource/bronze.png" height="35px" align="center"> | < 20      |
+| Champion  |<img src="https://github.com/hackjustu/Github-Ranking-FrontEnd/blob/master/resource/champion.png" height="35px" align="center"> | > 100     |
+| Gold      |<img src="https://github.com/hackjustu/Github-Ranking-FrontEnd/blob/master/resource/gold.png" height="35px" align="center"> | 50 - 100  |
+| Silver    |<img src="https://github.com/hackjustu/Github-Ranking-FrontEnd/blob/master/resource/silver.png" height="35px" align="center"> | 20 - 50   |
+| Bronze    |<img src="https://github.com/hackjustu/Github-Ranking-FrontEnd/blob/master/resource/bronze.png" height="35px" align="center"> | < 20      |
 
 >**Note:** If you are **Super Cell** and feel unhappy about how your lovely medal icons are used here, please just let me know. I'm more than happy to change them.
 
