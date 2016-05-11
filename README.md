@@ -129,6 +129,6 @@ MIT © [Cosmo](https://github.com/hackjustu)
 - category: full stack
 - team: Fighting Falcon
 - description: A real-time ranking board for BitTiger's Github members.
-- stack: angular, firebase
+- stack: nodejs, firebase
 
 
