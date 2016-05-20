@@ -117,11 +117,11 @@ var crawl_github = function (production) {
                                 }
 
                                 var len = previous_rankings[user].length;
-                                var max_num = 10;
+                                var max_num = 30;
                                 if (len <= max_num) {
                                     member_events[i].ranking_history = previous_rankings[user];
                                 } else {
-                                    var last_few_records = previous_rankings[user].slice(len - 1 - max_num, len - 1);
+                                    var last_few_records = previous_rankings[user].slice(len - max_num, len);
                                     member_events[i].ranking_history = last_few_records;
                                 }
                             }
