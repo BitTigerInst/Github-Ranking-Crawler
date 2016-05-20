@@ -100,12 +100,12 @@ var crawl_github = function (production) {
                                     });
 
 
-                                    // Adjust the previous ranking range. If we have more than 100 records, we'll keep the latest 20 records.
+                                    // Adjust the previous ranking range. If we have more than 100 records, we'll keep the latest 30 records.
                                     if (previous_rankings[user].length > 100) {
                                         var pre_range = previous_rankings[user];
                                         var pre_range_len = pre_range.length;
-                                        var lastest_20_range = previous_range.slice(pre_range_len - 1 - 20, pre_range_len - 1);
-                                        previous_rankings[user] = lastest_20_range;
+                                        var lastest_30_range = previous_range.slice(pre_range_len - 30, pre_range_len);
+                                        previous_rankings[user] = lastest_30_range;
                                     }
                                 } else {
                                     // user not exists in last rankings
@@ -117,11 +117,11 @@ var crawl_github = function (production) {
                                 }
 
                                 var len = previous_rankings[user].length;
-                                var max_num = 10;
+                                var max_num = 30;
                                 if (len <= max_num) {
                                     member_events[i].ranking_history = previous_rankings[user];
                                 } else {
-                                    var last_few_records = previous_rankings[user].slice(len - 1 - max_num, len - 1);
+                                    var last_few_records = previous_rankings[user].slice(len - max_num, len);
                                     member_events[i].ranking_history = last_few_records;
                                 }
                             }
